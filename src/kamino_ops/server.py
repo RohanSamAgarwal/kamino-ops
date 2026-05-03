@@ -23,7 +23,7 @@ from mcp.server.fastmcp import FastMCP
 
 from kamino_ops import __version__
 from kamino_ops.audit import audited
-from kamino_ops.tools import docker_ops, resources, system
+from kamino_ops.tools import docker_ops, resources, system, systemd_ops
 
 logger = logging.getLogger(__name__)
 
@@ -110,6 +110,45 @@ def get_container_logs(name_or_id: str, tail: int = 100) -> dict:
 def get_container_stats(name_or_id: str) -> dict:
     """Return CPU% and memory usage for a single container."""
     return docker_ops.get_container_stats(name_or_id=name_or_id)
+
+
+# ---------------------------------------------------------------------------
+# systemd tools (Linux-only; structured platform_unsupported error elsewhere)
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool()
+@audited("list_systemd_services")
+def list_systemd_services(state: str | None = None) -> dict:
+    """List systemd .service units (Linux only).
+
+    Args:
+        state: Optional systemd state to filter by (e.g. "running", "failed").
+    """
+    return systemd_ops.list_systemd_services(state=state)
+
+
+@mcp.tool()
+@audited("get_service_status")
+def get_service_status(unit: str) -> dict:
+    """Return load/active/sub state and metadata for a single systemd unit.
+
+    Args:
+        unit: systemd unit name (e.g. "ssh.service", "docker.service").
+    """
+    return systemd_ops.get_service_status(unit=unit)
+
+
+@mcp.tool()
+@audited("tail_journal")
+def tail_journal(unit: str, lines: int = 100) -> dict:
+    """Return the last N journal lines for a systemd unit (Linux only).
+
+    Args:
+        unit: systemd unit name.
+        lines: Number of trailing lines (capped at 5000).
+    """
+    return systemd_ops.tail_journal(unit=unit, lines=lines)
 
 
 # ---------------------------------------------------------------------------
