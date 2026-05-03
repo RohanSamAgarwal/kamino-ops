@@ -23,7 +23,7 @@ from mcp.server.fastmcp import FastMCP
 
 from kamino_ops import __version__
 from kamino_ops.audit import audited
-from kamino_ops.tools import system
+from kamino_ops.tools import resources, system
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +53,25 @@ def get_system_info() -> dict:
     long it's been up. Cheap; safe to call on every session start.
     """
     return dict(system.get_system_info())
+
+
+# ---------------------------------------------------------------------------
+# Resource tools
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool()
+@audited("get_resource_usage")
+def get_resource_usage(disk_path: str = "/") -> dict:
+    """Return a snapshot of CPU, memory, swap, disk, and load average.
+
+    Args:
+        disk_path: Mount path for disk usage. Defaults to ``/``.
+
+    Use this to answer "is anything under pressure right now?". Blocks
+    for ~0.5s to get an accurate CPU sample.
+    """
+    return dict(resources.get_resource_usage(disk_path=disk_path))
 
 
 # ---------------------------------------------------------------------------
