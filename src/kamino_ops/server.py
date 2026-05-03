@@ -23,7 +23,7 @@ from mcp.server.fastmcp import FastMCP
 
 from kamino_ops import __version__
 from kamino_ops.audit import audited
-from kamino_ops.tools import resources, system
+from kamino_ops.tools import docker_ops, resources, system
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +72,44 @@ def get_resource_usage(disk_path: str = "/") -> dict:
     for ~0.5s to get an accurate CPU sample.
     """
     return dict(resources.get_resource_usage(disk_path=disk_path))
+
+
+# ---------------------------------------------------------------------------
+# Docker tools
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool()
+@audited("list_docker_containers")
+def list_docker_containers(all_containers: bool = False) -> dict:
+    """List Docker containers on the local daemon (running only by default).
+
+    Args:
+        all_containers: Include stopped containers when True.
+
+    Returns a structured envelope: ``{"ok": bool, ...}``. On daemon
+    failure, ``ok`` is False and ``error`` describes the cause.
+    """
+    return docker_ops.list_docker_containers(all_containers=all_containers)
+
+
+@mcp.tool()
+@audited("get_container_logs")
+def get_container_logs(name_or_id: str, tail: int = 100) -> dict:
+    """Tail recent logs from a Docker container.
+
+    Args:
+        name_or_id: Container name or short ID.
+        tail: Number of trailing lines (capped at 5000).
+    """
+    return docker_ops.get_container_logs(name_or_id=name_or_id, tail=tail)
+
+
+@mcp.tool()
+@audited("get_container_stats")
+def get_container_stats(name_or_id: str) -> dict:
+    """Return CPU% and memory usage for a single container."""
+    return docker_ops.get_container_stats(name_or_id=name_or_id)
 
 
 # ---------------------------------------------------------------------------
