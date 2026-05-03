@@ -20,7 +20,6 @@ from kamino_ops.tools.docker_ops import (
     list_docker_containers,
 )
 
-
 # ---------------------------------------------------------------------------
 # list_docker_containers
 # ---------------------------------------------------------------------------
@@ -105,9 +104,7 @@ def test_get_container_logs_caps_at_max_lines() -> None:
         result = get_container_logs("plunder", tail=99_999)
         assert result["truncated_by_cap"] is True
         # Verify the SDK was called with the cap, not the user's number
-        container.logs.assert_called_once_with(
-            tail=MAX_LOG_LINES, stdout=True, stderr=True
-        )
+        container.logs.assert_called_once_with(tail=MAX_LOG_LINES, stdout=True, stderr=True)
 
 
 def test_get_container_logs_rejects_invalid_tail() -> None:
@@ -129,7 +126,9 @@ def test_get_container_logs_returns_error_on_not_found() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _stats_sample(cpu_now: int = 200, cpu_prev: int = 100, sys_now: int = 1000, sys_prev: int = 500) -> dict:
+def _stats_sample(
+    cpu_now: int = 200, cpu_prev: int = 100, sys_now: int = 1000, sys_prev: int = 500
+) -> dict:
     return {
         "cpu_stats": {
             "cpu_usage": {"total_usage": cpu_now},

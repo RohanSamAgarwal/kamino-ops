@@ -23,10 +23,11 @@ import json
 import logging
 import os
 import time
-from datetime import datetime, timezone
+from collections.abc import Callable
+from datetime import UTC, datetime
 from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +41,7 @@ def _audit_log_path() -> Path:
 
 def _utc_now_iso() -> str:
     """Return the current UTC time as ``2026-05-03T17:42:08Z``."""
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _write_entry(entry: dict[str, Any]) -> None:

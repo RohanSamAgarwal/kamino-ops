@@ -71,11 +71,16 @@ def test_validate_unit_rejects_bad_names(force_linux: None, bad: str) -> None:
         assert result["error"] == "invalid_unit"
 
 
-@pytest.mark.parametrize("good", ["ssh.service", "docker.service", "user@1000.service", "kamino-ops.service"])
+@pytest.mark.parametrize(
+    "good", ["ssh.service", "docker.service", "user@1000.service", "kamino-ops.service"]
+)
 def test_validate_unit_accepts_real_names(force_linux: None, good: str) -> None:
     # Must not return invalid_unit; will go on to call subprocess (which we
     # mock out so the test itself is platform-independent).
-    with patch("subprocess.run", return_value=_proc(stdout="LoadState=loaded\nActiveState=active\nSubState=running\n")):
+    with patch(
+        "subprocess.run",
+        return_value=_proc(stdout="LoadState=loaded\nActiveState=active\nSubState=running\n"),
+    ):
         result = get_service_status(good)
     assert result["ok"] is True
     assert result["unit"] == good
@@ -162,7 +167,10 @@ def test_status_returns_unit_not_found_when_load_state_empty(force_linux: None) 
 
 def test_status_handles_pid_zero(force_linux: None) -> None:
     """Inactive services have MainPID=0; we should report None, not 0."""
-    with patch("subprocess.run", return_value=_proc(stdout="LoadState=loaded\nActiveState=inactive\nMainPID=0\n")):
+    with patch(
+        "subprocess.run",
+        return_value=_proc(stdout="LoadState=loaded\nActiveState=inactive\nMainPID=0\n"),
+    ):
         result = get_service_status("inactive.service")
     assert result["main_pid"] is None
 

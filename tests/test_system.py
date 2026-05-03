@@ -55,7 +55,9 @@ def test_audited_decorator_writes_one_line(tmp_path: Path, monkeypatch: pytest.M
     assert entry["duration_ms"] >= 0
 
 
-def test_audited_decorator_records_failures(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_audited_decorator_records_failures(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     log = tmp_path / "audit.log"
     monkeypatch.setenv("KAMINO_OPS_AUDIT_LOG", str(log))
 

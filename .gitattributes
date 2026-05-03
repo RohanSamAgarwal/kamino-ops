@@ -1,0 +1,19 @@
+# Normalize line endings: store as LF in the repo, check out LF on Linux/macOS
+# and CRLF on Windows. This silences the LF-will-be-replaced warnings on Win.
+* text=auto eol=lf
+
+# Python source — always LF (matters for shebang lines)
+*.py text eol=lf
+*.pyi text eol=lf
+
+# Configuration files — always LF
+*.toml text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+
+# Shell scripts — always LF
+*.sh text eol=lf
+
+# Markdown — LF for portability
+*.md text eol=lf

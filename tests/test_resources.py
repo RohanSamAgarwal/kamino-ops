@@ -8,7 +8,6 @@ exception: we can deterministically assert it's ``None`` on Windows.
 from __future__ import annotations
 
 import sys
-from pathlib import Path
 
 from kamino_ops.tools.resources import get_resource_usage
 
