@@ -2,9 +2,10 @@
 
 **A Model Context Protocol (MCP) server that lets AI agents safely operate a real production homeserver.**
 
-[![Status](https://img.shields.io/badge/status-alpha-orange)]()
-[![Python](https://img.shields.io/badge/python-3.11%2B-blue)]()
-[![MCP](https://img.shields.io/badge/protocol-MCP%201.x-7c3aed)]()
+[![CI](https://github.com/RohanSamAgarwal/kamino-ops/actions/workflows/ci.yml/badge.svg)](https://github.com/RohanSamAgarwal/kamino-ops/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
+[![MCP](https://img.shields.io/badge/protocol-MCP%201.x-7c3aed)](https://modelcontextprotocol.io/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 Kamino Ops exposes my Ubuntu homeserver — codenamed **Kamino** — to Claude Code (and any other MCP-compatible agent: Cursor, Codex, Gemini CLI, VS Code Copilot agents) through a small, auditable, read-first toolset. It runs every day to operate the production deployment of [rohansagarwal.com/plunder](https://rohansagarwal.com/plunder), a multiplayer board game that serves real users.
 
