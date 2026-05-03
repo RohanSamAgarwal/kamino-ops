@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "kamino-ops"
+version = "0.1.0"
+description = "Model Context Protocol (MCP) server exposing read-only operations tools for the Kamino homeserver."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Rohan Agarwal" }]
+keywords = ["mcp", "model-context-protocol", "claude", "homeserver", "agent"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: System :: Systems Administration",
+]
+
+dependencies = [
+    # Anthropic's official MCP SDK
+    "mcp>=1.2.0",
+    # System metrics (CPU, memory, disk, uptime)
+    "psutil>=5.9.0",
+    # Docker SDK (read-only container operations in v1)
+    "docker>=7.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.5.0",
+]
+
+[project.scripts]
+# Allows `kamino-ops` to be run directly once installed
+kamino-ops = "kamino_ops.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/kamino_ops"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
