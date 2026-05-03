@@ -31,23 +31,27 @@ applications May–June 2026). Specifically demonstrates:
 | v1 scope | Read-only tools only | Smallest blast radius; demoable in 1–2 sessions; v2 adds writes behind dry-run. |
 | Audit log | Day-one, append-only JSONL | "Audited from day one" is a stronger interview answer than "added later." |
 
-## Current state (last updated 2026-05-03)
+## Current state (last updated 2026-05-03, end of session 2)
 
-**Working / tested:**
+**Shipped at v0.1.0** — repo live at https://github.com/RohanSamAgarwal/kamino-ops, CI green.
 
-- Full scaffold: `pyproject.toml`, `README.md`, `docs/architecture.md`, `.gitignore`, `.python-version`.
-- venv at `.venv/`, `pip install -e ".[dev]"` succeeds. `mcp 1.27.0`, `docker 7.1.0`, `psutil 7.2.2`.
-- `audit.py` — `@audited(name)` decorator; writes one JSONL line per call to `audit.log`. Path overridable via `KAMINO_OPS_AUDIT_LOG` env var.
-- `tools/system.py` — `get_system_info()`, returns `SystemInfo` TypedDict (hostname, OS, kernel, uptime).
-- `server.py` — FastMCP server named `kamino-ops`, one registered tool (`get_system_info`).
-- `tests/test_system.py` — 3 tests, all passing (`pytest -q` clean in 0.13s).
+- 8 read-only tools across 4 categories:
+  - **system**: `get_system_info`
+  - **resources**: `get_resource_usage`
+  - **docker_ops**: `list_docker_containers`, `get_container_logs`, `get_container_stats`
+  - **systemd_ops**: `list_systemd_services`, `get_service_status`, `tail_journal`
+- Audit log infrastructure (`@audited` decorator → JSONL on disk) wired into every tool.
+- Structured `ok/error` envelope on tools with non-trivial failure modes (docker, systemd).
+- 36 passing tests, all subprocess/Docker calls mocked → CI runs anywhere.
+- CI matrix: pytest on Ubuntu+Windows × Python 3.11+3.13, plus `ruff check`/`format --check`.
+- `.gitattributes` for cross-platform line endings; LICENSE (MIT); README with badges.
+- `docs/architecture.md` — layering, threat model, design principles.
+- `docs/deployment.md` + `scripts/install-on-kamino.sh` — SSH-installable runbook.
 
 **Not done yet:**
 
-- Resource-usage tool (CPU%, memory, disk, load avg via psutil).
-- Docker tools (list, logs, stats).
-- systemd tools (list units, status, tail journal).
-- Live test on Kamino (clone repo there, install, wire into Claude Code MCP config).
+- Run `scripts/install-on-kamino.sh` on Kamino (manual SSH step; Rohan still needs to do this).
+- Wire kamino-ops into Claude Code config on Kamino (see `docs/deployment.md`).
 - v0.2 onward (write tools, dry-run pattern, GitHub integration, HTTP transport, dashboard, evals).
 
 ## How to resume
@@ -85,7 +89,7 @@ To connect Claude Code to the local server, add to `~/.claude/mcp_servers.json`:
 
 ## What to do next
 
-1. Implement `tools/resources.py` with `get_resource_usage()` — `psutil.cpu_percent(interval=0.5)`, `virtual_memory()`, `disk_usage('/')`, `getloadavg()` (Linux only — fall back to `None` on Windows so dev-time iteration still works).
-2. Wire into `server.py` with `@mcp.tool()` + `@audited(...)`.
-3. Add `tests/test_resources.py` with shape assertions only (values vary).
-4. Then move to docker, then systemd. Each is its own commit.
+1. **SSH into Kamino and run `scripts/install-on-kamino.sh`.** Smoke-test will print real hostname/CPU/docker state. This validates the deployment story end-to-end and lets you start collecting "tool calls served from production" numbers for the resume.
+2. **Wire into Claude Code on Kamino** (`docs/deployment.md`). Try a real prompt against the agent: *"What's the status of the plunder container and how's CPU looking?"*
+3. **v0.2 design discussion** before any code: which mutating tools first? What does the dry-run pattern look like in practice? `restart_service` and `redeploy_from_github` are the obvious starting candidates.
+4. **v0.4 stretch** — public dashboard rendering audit-log entries on rohansagarwal.com. This is the artifact a recruiter spends 30 seconds looking at.
